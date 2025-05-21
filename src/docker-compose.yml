@@ -1,0 +1,19 @@
+﻿services:
+  bettingdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "SuperSecretPass12345"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - betting_data:/var/opt/mssql
+    networks:
+      - betting_network
+    
+volumes:
+  betting_data:
+    
+networks:
+  betting_network:
+    driver: bridge
