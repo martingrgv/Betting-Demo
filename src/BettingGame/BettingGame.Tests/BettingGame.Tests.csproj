@@ -22,11 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BettingGame.Domain\BettingGame.Domain.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="ApplicationTests\" />
+      <Folder Include="Services\" />
     </ItemGroup>
 
 </Project>

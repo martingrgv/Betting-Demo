@@ -2,17 +2,14 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BettingGame", "BettingGame", "{6D7842ED-9681-4EBB-A064-516C2F311FCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BettingGame.UI", "BettingGame\BettingGame.UI\BettingGame.UI.csproj", "{40DA34BE-FB19-454D-8D9C-744078C9896F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BettingGame.Domain", "BettingGame\BettingGame.Domain\BettingGame.Domain.csproj", "{9E0DB5DF-C354-4EFF-9FE6-97DB29448BF5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BettingGame.Infrastructure", "BettingGame\BettingGame.Infrastructure\BettingGame.Infrastructure.csproj", "{55EA352A-7452-4F14-B9FB-0C8879F3A6C0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BettingGame.Application", "BettingGame\BettingGame.Application\BettingGame.Application.csproj", "{1CBE4968-1F16-4D5C-8C43-E1E0F727F0E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BettingGame", "BettingGame\BettingGame\BettingGame.csproj", "{40DA34BE-FB19-454D-8D9C-744078C9896F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BettingGame.Tests", "BettingGame\BettingGame.Tests\BettingGame.Tests.csproj", "{1CFA9A73-04DE-4A4F-8EA1-EDB752F965F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BettingGame.Shared", "BettingGame\BettingGame.Shared\BettingGame.Shared.csproj", "{C304EEE7-F07E-4448-A9CF-605156996362}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{385CEB08-9598-483B-BC2D-AC44B0792F52}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,36 +18,16 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{40DA34BE-FB19-454D-8D9C-744078C9896F} = {6D7842ED-9681-4EBB-A064-516C2F311FCA}
-		{9E0DB5DF-C354-4EFF-9FE6-97DB29448BF5} = {6D7842ED-9681-4EBB-A064-516C2F311FCA}
-		{55EA352A-7452-4F14-B9FB-0C8879F3A6C0} = {6D7842ED-9681-4EBB-A064-516C2F311FCA}
-		{1CBE4968-1F16-4D5C-8C43-E1E0F727F0E5} = {6D7842ED-9681-4EBB-A064-516C2F311FCA}
 		{1CFA9A73-04DE-4A4F-8EA1-EDB752F965F8} = {6D7842ED-9681-4EBB-A064-516C2F311FCA}
-		{C304EEE7-F07E-4448-A9CF-605156996362} = {6D7842ED-9681-4EBB-A064-516C2F311FCA}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{40DA34BE-FB19-454D-8D9C-744078C9896F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{40DA34BE-FB19-454D-8D9C-744078C9896F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40DA34BE-FB19-454D-8D9C-744078C9896F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40DA34BE-FB19-454D-8D9C-744078C9896F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E0DB5DF-C354-4EFF-9FE6-97DB29448BF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E0DB5DF-C354-4EFF-9FE6-97DB29448BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E0DB5DF-C354-4EFF-9FE6-97DB29448BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E0DB5DF-C354-4EFF-9FE6-97DB29448BF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{55EA352A-7452-4F14-B9FB-0C8879F3A6C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55EA352A-7452-4F14-B9FB-0C8879F3A6C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55EA352A-7452-4F14-B9FB-0C8879F3A6C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55EA352A-7452-4F14-B9FB-0C8879F3A6C0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1CBE4968-1F16-4D5C-8C43-E1E0F727F0E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1CBE4968-1F16-4D5C-8C43-E1E0F727F0E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1CBE4968-1F16-4D5C-8C43-E1E0F727F0E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1CBE4968-1F16-4D5C-8C43-E1E0F727F0E5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1CFA9A73-04DE-4A4F-8EA1-EDB752F965F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1CFA9A73-04DE-4A4F-8EA1-EDB752F965F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CFA9A73-04DE-4A4F-8EA1-EDB752F965F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CFA9A73-04DE-4A4F-8EA1-EDB752F965F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C304EEE7-F07E-4448-A9CF-605156996362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C304EEE7-F07E-4448-A9CF-605156996362}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C304EEE7-F07E-4448-A9CF-605156996362}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C304EEE7-F07E-4448-A9CF-605156996362}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
