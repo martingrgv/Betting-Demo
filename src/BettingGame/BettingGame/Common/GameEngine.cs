@@ -41,13 +41,13 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
                 switch (choice)
                 {
                     case "bet":
-                        command = commandFactory.Create<BetCommand>();
+                        command = commandFactory.Create<BetCommand>(wallet);
                         break;
                     case "deposit":
                         command = commandFactory.Create<DepositCommand>(wallet);
                         break;
                     case "withdraw":
-                        command = commandFactory.Create<WithdrawCommand>();
+                        command = commandFactory.Create<WithdrawCommand>(wallet);
                         break;
                     case "exit":
                         break;
@@ -74,6 +74,7 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
             }
             else
             {
+                Console.WriteLine(result.Message);
                 Console.WriteLine("Apologies for the inconvenience. Issue was found and is being reported to the administrators.");
                 Log.Fatal(result.Exception, $"{command.GetType().Name} resulted in error!");
                 Console.WriteLine("Thank you for your patience. You may continue.");

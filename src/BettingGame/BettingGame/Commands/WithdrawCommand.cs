@@ -1,4 +1,5 @@
 using System.Globalization;
+using BettingGame.Exceptions;
 
 namespace BettingGame.Commands;
 
@@ -10,8 +11,8 @@ public class WithdrawCommand(IWalletService walletService, Wallet wallet) : ICom
         {
             decimal amount = decimal.Parse(inputArgs[1], NumberStyles.Number, CultureInfo.InvariantCulture);
             
-            await walletService.DepositAsync(wallet, amount);
-            Log.Information("Deposit of ${amount} has been made on wallet: {WalletId}", amount, wallet.Id);
+            await walletService.WithdrawAsync(wallet, amount);
+            Log.Information("Withdraw of ${amount} has been made on wallet: {WalletId}", amount, wallet.Id);
 
             string message = string.Join(
                 " ",
@@ -22,6 +23,11 @@ public class WithdrawCommand(IWalletService walletService, Wallet wallet) : ICom
         }
         catch (Exception ex)
         {
+            if (ex is InsufficientBalanceException)
+            {
+                return Result.Failure(MessageConstants.InsufficientBalanceWithdrawMessage, ex);
+            }
+            
             return Result.Failure(ex);
         }
     }

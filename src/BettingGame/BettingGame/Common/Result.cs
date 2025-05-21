@@ -14,5 +14,6 @@ public class Result
     public Exception Exception { get; }
 
     public static Result Success(string message) => new(true, message, null); 
+    public static Result Failure(string message, Exception exception) => new(false, message, exception); 
     public static Result Failure(Exception exception) => new(false, default, exception); 
 }

@@ -13,6 +13,7 @@ public static class MessageConstants
     // Wallet
     public const string SuccessDepositMessage = "Your deposit of ${0} was successful.";
     public const string SuccessWithdrawMessage = "Your withdraw of {0} was successful.";
+    public const string InsufficientBalanceWithdrawMessage = "Cannot withdraw due to insufficient balance!";
     
     
 }
