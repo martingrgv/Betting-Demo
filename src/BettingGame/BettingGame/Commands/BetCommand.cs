@@ -38,7 +38,7 @@ public class BetCommand(IBetService betService, IWalletService walletService, Wa
         }
         catch (ArgumentException ex)
         {
-            return Result.Failure(ex.Message, ex);
+            return Result.Failure(ex.ParamName!, ex);
         }
         catch (Exception ex)
         {
