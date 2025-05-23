@@ -1,3 +1,5 @@
+using BettingGame.Data.Models;
+
 namespace BettingGame.Abstractions;
 
 public interface IWalletService

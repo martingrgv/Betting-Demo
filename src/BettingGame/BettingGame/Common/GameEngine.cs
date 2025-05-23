@@ -11,7 +11,7 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
         Log.Information("Engine started.");
 
         var playerId = GetPlayerId();
-        var wallet = await GetWallet(playerId);
+        var wallet = await GetOrCreateWallet(playerId);
         
         while (_isRunning)
         {
@@ -24,13 +24,14 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
 
             if (input.Length == 0)
             {
-                Console.WriteLine("No choice was made");
+                Console.WriteLine(NoCommandMessage);
                 continue;
             }
             
             string choice = input[0];
             if (choice == "exit")
             {
+                Console.WriteLine(ExitMessage);
                 Log.Information("{PlayerId} exited game.", playerId);
                 _isRunning = false;
                 continue;
@@ -48,8 +49,6 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
                         break;
                     case "withdraw":
                         command = commandFactory.Create<WithdrawCommand>(wallet);
-                        break;
-                    case "exit":
                         break;
                     default:
                         Console.WriteLine(InvalidCommandUsageMessage);
@@ -75,14 +74,14 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
             else
             {
                 Console.WriteLine(result.Message);
-                Console.WriteLine("Apologies for the inconvenience. Issue was found and is being reported to the administrators.");
                 Log.Fatal(result.Exception, $"{command.GetType().Name} resulted in error!");
-                Console.WriteLine("Thank you for your patience. You may continue.");
             }
+
+            Console.WriteLine();
         }
     }
 
-    private async Task<Wallet> GetWallet(Guid playerId)
+    private async Task<Wallet> GetOrCreateWallet(Guid playerId)
     {
         var wallet = await walletService.GetByPlayerId(playerId)
                      ?? await walletService.CreateWalletAsync(playerId);

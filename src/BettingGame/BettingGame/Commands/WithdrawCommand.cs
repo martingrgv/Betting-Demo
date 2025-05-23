@@ -1,6 +1,3 @@
-using System.Globalization;
-using BettingGame.Exceptions;
-
 namespace BettingGame.Commands;
 
 public class WithdrawCommand(IWalletService walletService, Wallet wallet) : ICommand
@@ -17,7 +14,7 @@ public class WithdrawCommand(IWalletService walletService, Wallet wallet) : ICom
             string message = string.Join(
                 " ",
                 string.Format(MessageConstants.SuccessWithdrawMessage, amount),
-                string.Format(MessageConstants.BalanceReviewMessage, wallet.Balance));
+                string.Format(MessageConstants.BalanceReviewMessage, $"{wallet.Balance:f2}"));
 
             return Result.Success(message);
         }

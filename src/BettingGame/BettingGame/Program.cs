@@ -17,7 +17,7 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, $"{nameof(Program)} error!");
+    Log.Fatal(ex, $"{nameof(Program)} execution error!");
 }
 
 HostApplicationBuilder CreateBuilder(string[] args)
@@ -26,6 +26,12 @@ HostApplicationBuilder CreateBuilder(string[] args)
     builder.Configuration.AddJsonFile("appsettings.json", false);
 
     builder.Logging.ClearProviders();
+    
+    builder.ConfigureContainer(new DefaultServiceProviderFactory(new ServiceProviderOptions
+    {
+        ValidateOnBuild = true,
+        ValidateScopes = true
+    }));
 
     builder.Services.AddLogging(builder.Configuration);
     builder.Services.AddInfrastructure(builder.Configuration);

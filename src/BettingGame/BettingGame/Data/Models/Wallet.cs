@@ -1,4 +1,4 @@
-namespace BettingGame.Data.Persistence.Models;
+namespace BettingGame.Data.Models;
 
 public class Wallet
 {

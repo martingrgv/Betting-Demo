@@ -1,26 +1,17 @@
-using System.Diagnostics;
-using BettingGame.Abstractions;
-using BettingGame.Constants;
-using BettingGame.Data.Persistence;
-using BettingGame.Exceptions;
+using BettingGame.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace BettingGame.Services;
 
-public class WalletService : IWalletService
+public class WalletService(BettingDbContext dbContext) : IWalletService
 {
-    private BettingDbContext _dbContext;
-    
-    public WalletService(BettingDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+   private const int InitialBalance = 0;
     
     public async Task<Wallet?> GetById(Guid id)
-        => await _dbContext.Wallets.FindAsync(id);
+        => await dbContext.Wallets.FindAsync(id);
 
     public async Task<Wallet?> GetByPlayerId(Guid playerId)
-        => await _dbContext.Wallets.FirstOrDefaultAsync(w => w.PlayerId == playerId);
+        => await dbContext.Wallets.FirstOrDefaultAsync(w => w.PlayerId == playerId);
 
     public async Task<Wallet> CreateWalletAsync(Guid playerId)
     {
@@ -34,10 +25,10 @@ public class WalletService : IWalletService
         wallet = new Wallet(
             Guid.NewGuid(),
             playerId,
-            WalletConstants.InitialBalance);
+            InitialBalance);
 
-        _dbContext.Wallets.Add(wallet);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Wallets.Add(wallet);
+        await dbContext.SaveChangesAsync();
 
         return wallet;
     }
@@ -48,9 +39,14 @@ public class WalletService : IWalletService
         {
             throw new ArgumentNullException(nameof(wallet));
         }
+        
+        if (amount < 0)
+        {
+            throw new ArgumentOutOfRangeException($"{nameof(amount)} must be a positive number.");
+        }
 
         wallet.UpdateAmount(amount);
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task<decimal> WithdrawAsync(Wallet wallet, decimal amount)
@@ -60,13 +56,18 @@ public class WalletService : IWalletService
             throw new ArgumentNullException(nameof(wallet));
         }
 
+        if (amount < 0)
+        {
+            throw new ArgumentOutOfRangeException($"{nameof(amount)} must be a positive number.");
+        }
+
         if (wallet.Balance - amount < 0)
         {
             throw new InsufficientBalanceException(wallet.Id, amount);
         }
 
         wallet.UpdateAmount(-amount);
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
         
         return amount;
     }

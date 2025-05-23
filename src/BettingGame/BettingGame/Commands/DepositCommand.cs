@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace BettingGame.Commands;
 
 public class DepositCommand(IWalletService walletService, Wallet wallet) : ICommand
@@ -16,7 +14,7 @@ public class DepositCommand(IWalletService walletService, Wallet wallet) : IComm
             string message = string.Join(
                 " ",
                 string.Format(MessageConstants.SuccessDepositMessage, amount),
-                string.Format(MessageConstants.BalanceReviewMessage, wallet.Balance));
+                string.Format(MessageConstants.BalanceReviewMessage, $"{wallet.Balance:f2}"));
 
             return Result.Success(message);
         }

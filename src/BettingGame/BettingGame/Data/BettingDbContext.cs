@@ -1,7 +1,8 @@
 using System.Reflection;
+using BettingGame.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BettingGame.Data.Persistence;
+namespace BettingGame.Data;
 
 public class BettingDbContext(DbContextOptions<BettingDbContext> options) : DbContext(options)
 {

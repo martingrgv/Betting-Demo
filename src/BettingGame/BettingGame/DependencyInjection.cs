@@ -1,4 +1,5 @@
-using BettingGame.Data.Persistence;
+using BettingGame.BetStrategies;
+using BettingGame.Data;
 using BettingGame.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,10 +12,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddScoped<IGameService, GameService>();
+        services.AddScoped<IBetService, BetService>();
         services.AddScoped<IWalletService, WalletService>();
-        services.AddSingleton<IGameEngine, GameEngine>();
-        services.AddSingleton<CommandFactory>();
+        services.AddScoped<IGameEngine, GameEngine>();
+        services.AddScoped<CommandFactory>();
+        services.AddSingleton<IBetOutcomeResolver, BetOutcomeResolver>();
         
         return services;
     }
