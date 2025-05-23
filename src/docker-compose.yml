@@ -1,4 +1,22 @@
-﻿services:
+﻿version: '3.9'
+
+services:
+  betting.game:
+    image: ${DOCKER_REGISTRY-}betting.game
+    build:
+      context: .
+      dockerfile: BettingGame/BettingGame/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=bettingdb;Database=BettingGameDb;User=sa;Password=SuperSecretPass12345;TrustServerCertificate=True
+    depends_on:
+      - bettingdb
+    stdin_open: true
+    tty: true
+    profiles:
+      - interactive
+    networks:
+      - betting_network
+        
   bettingdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:

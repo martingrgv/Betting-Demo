@@ -23,7 +23,9 @@ catch (Exception ex)
 HostApplicationBuilder CreateBuilder(string[] args)
 {
     var builder = Host.CreateApplicationBuilder(args);
-    builder.Configuration.AddJsonFile("appsettings.json", false);
+    builder.Configuration
+        .AddJsonFile("appsettings.json", false)
+        .AddEnvironmentVariables();
 
     builder.Logging.ClearProviders();
     
