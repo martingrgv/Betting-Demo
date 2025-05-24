@@ -1,18 +1,7 @@
 namespace BettingGame.Common;
 
-public class Result
+public record Result(bool IsSuccess, string? Message, Exception? Exception)
 {
-    private Result(bool isSuccess, string? message, Exception? exception)
-    {
-        IsSuccess = isSuccess;
-        Message = message;
-        Exception = exception;
-    }
-    
-    public bool IsSuccess { get; }
-    public string Message { get; }
-    public Exception Exception { get; }
-
     public static Result Success(string message) => new(true, message, null); 
     public static Result Failure(string message, Exception exception) => new(false, message, exception); 
     public static Result Failure(Exception exception) => new(false, default, exception); 
