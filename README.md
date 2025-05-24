@@ -82,10 +82,7 @@ dotnet run
 2. Run the commands one after the other to start Docker services and run the application in terminal:
 ```
 cd src
-docker-compose up -d
-```
-```
-docker-compose --profile interactive run betting.game
+docker-compose up -d && docker-compose --profile interactive run betting.game
 ```
 
 ### 📄 License
