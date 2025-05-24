@@ -79,6 +79,8 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
 
             Console.WriteLine();
         }
+        
+        Log.Information("Engine killed.");
     }
 
     private async Task<Wallet> GetOrCreateWallet(Guid playerId)

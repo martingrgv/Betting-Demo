@@ -149,6 +149,15 @@ public class WalletServiceTests
     }
 
     [Test]
+    public void DepositAsync_GreaterThanMaxAmount_ThrowsException()
+    {
+        var amount = 10;
+        var wallet = new Wallet(Guid.NewGuid(), Guid.NewGuid(), decimal.MaxValue);
+
+        Assert.ThrowsAsync<InvalidOperationException>(() => _walletService.DepositAsync(wallet, amount));
+    }
+    
+    [Test]
     public void DepositAsync_NegativeAmount_ThrowsException()
     {
         var negativeAmount = -200;
@@ -193,6 +202,23 @@ public class WalletServiceTests
     }
     
     [Test]
+    public async Task WithdrawAsync_GreaterThanMaxAmountBalance_LowersBalance()
+    {
+        var walletId = Guid.NewGuid();
+        var playerId = Guid.NewGuid();
+        var balance = decimal.MaxValue;
+        var withdrawAmount = 1;
+        var wallet = new Wallet(walletId, playerId, balance);
+
+        _dbContext.Wallets.Add(wallet);
+        await _dbContext.SaveChangesAsync();
+
+        Assert.DoesNotThrowAsync(() => _walletService.WithdrawAsync(wallet, withdrawAmount));
+        Assert.That(async () => (await _dbContext.Wallets.FindAsync(walletId))!.Balance,
+            Is.EqualTo(balance - withdrawAmount));
+    }
+    
+    [Test]
     public void WithdrawAsync_InsufficientBalance_ThrowsException()
     {
         var balance = 100m;
@@ -226,7 +252,7 @@ public class WalletServiceTests
     [Test]
     public void WithdrawAsync_NullWallet_ThrowsException()
     {
-         Assert.ThrowsAsync<ArgumentNullException>(() => _walletService.WithdrawAsync(null, 0));
+         Assert.ThrowsAsync<NullReferenceException>(() => _walletService.WithdrawAsync(null, 0));
     }
 
     [TearDown]

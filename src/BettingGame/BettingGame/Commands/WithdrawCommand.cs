@@ -8,7 +8,7 @@ public class WithdrawCommand(IWalletService walletService, Wallet wallet) : ICom
         {
             decimal amount = decimal.Parse(inputArgs[1], NumberStyles.Number, CultureInfo.InvariantCulture);
             ArgumentOutOfRangeException.ThrowIfNegative(amount);
-            
+
             await walletService.WithdrawAsync(wallet, amount);
             Log.Information("Withdraw of ${amount} has been made on wallet: {WalletId}", amount, wallet.Id);
 
@@ -19,13 +19,16 @@ public class WithdrawCommand(IWalletService walletService, Wallet wallet) : ICom
 
             return Result.Success(message);
         }
+        catch (InsufficientBalanceException ex)
+        {
+            return Result.Failure(MessageConstants.InsufficientBalanceWithdrawMessage, ex);
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            return Result.Failure(MessageConstants.InvalidAmountMessage, ex);
+        }
         catch (Exception ex)
         {
-            if (ex is InsufficientBalanceException)
-            {
-                return Result.Failure(MessageConstants.InsufficientBalanceWithdrawMessage, ex);
-            }
-            
             return Result.Failure(MessageConstants.CommonErrorMessage, ex);
         }
     }

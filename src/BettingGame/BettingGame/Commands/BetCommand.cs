@@ -41,6 +41,10 @@ public class BetCommand(IBetService betService, IWalletService walletService, Wa
         {
             return Result.Failure(ex.InnerException!.Message, ex);
         }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            return Result.Failure(MessageConstants.InvalidAmountMessage, ex);
+        }
         catch (Exception ex)
         {
             return Result.Failure(MessageConstants.CommonErrorMessage, ex);

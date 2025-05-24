@@ -34,25 +34,38 @@ public class WalletService(BettingDbContext dbContext) : IWalletService
 
     public async Task DepositAsync(Wallet wallet, decimal amount)
     {
-        ArgumentNullException.ThrowIfNull(wallet);
         ArgumentOutOfRangeException.ThrowIfNegative(amount);
-
-        dbContext.Attach(wallet);
-        wallet.UpdateAmount(amount);
         
-        await dbContext.SaveChangesAsync();
+        await UpdateBalanceAsync(wallet, amount);
     }
 
     public async Task<decimal> WithdrawAsync(Wallet wallet, decimal amount)
     {
-        ArgumentNullException.ThrowIfNull(wallet);
-        ArgumentOutOfRangeException.ThrowIfNegative(amount);
         InsufficientBalanceException.ThrowIfBalanceNegative(wallet, amount);
-
-        dbContext.Attach(wallet);
-        wallet.UpdateAmount(-amount);
+        ArgumentOutOfRangeException.ThrowIfNegative(amount);
         
-        await dbContext.SaveChangesAsync();
-        return amount;
+        var withdrawAmount = await UpdateBalanceAsync(wallet, -amount);
+
+        return withdrawAmount;
+    }
+
+    private async Task<decimal> UpdateBalanceAsync(Wallet wallet, decimal amount)
+    {
+        ArgumentNullException.ThrowIfNull(wallet);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(amount, decimal.MaxValue);
+
+        try
+        {
+            dbContext.Attach(wallet);
+            wallet.UpdateAmount(amount);
+            await dbContext.SaveChangesAsync();
+            
+            return amount;
+        }
+        catch (DbUpdateException)
+        {
+            await dbContext.Entry(wallet).ReloadAsync();
+            throw;
+        }
     }
 }

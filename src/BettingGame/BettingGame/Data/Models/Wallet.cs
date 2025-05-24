@@ -20,6 +20,16 @@ public class Wallet
 
     public void UpdateAmount(decimal amount)
     {
-        Balance += amount;
+        try
+        {
+            checked
+            {
+                Balance += amount;
+            }
+        }
+        catch (OverflowException ex)
+        {
+            throw new InvalidOperationException("Could not update value! Overflow may occur.", ex);
+        }
     }
 }

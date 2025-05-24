@@ -8,7 +8,7 @@ public class DepositCommand(IWalletService walletService, Wallet wallet) : IComm
         {
             decimal amount = decimal.Parse(inputArgs[1], NumberStyles.Number, CultureInfo.InvariantCulture);
             ArgumentOutOfRangeException.ThrowIfNegative(amount);
-            
+
             await walletService.DepositAsync(wallet, amount);
             Log.Information("Deposit of ${amount} has been made on wallet: {WalletId}", amount, wallet.Id);
 
@@ -18,6 +18,10 @@ public class DepositCommand(IWalletService walletService, Wallet wallet) : IComm
                 string.Format(MessageConstants.BalanceReviewMessage, $"{wallet.Balance:f2}"));
 
             return Result.Success(message);
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            return Result.Failure(MessageConstants.InvalidAmountMessage, ex);
         }
         catch (Exception ex)
         {
