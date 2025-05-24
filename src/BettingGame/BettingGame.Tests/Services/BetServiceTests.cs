@@ -11,14 +11,14 @@ public class BetServiceTests
     private const decimal MinBetAmount = 1;
     private const decimal MaxBetAmount = 10;
     private Mock<IBetOutcomeResolver> _betResolverMock;
-    private Mock<IBetOutcomeStrategy> _betStrategy;
+    private Mock<IBetOutcomeStrategy> _betStrategyMock;
     private IBetService _betService;
 
     [SetUp]
     public void SetUp()
     {
         _betResolverMock = new Mock<IBetOutcomeResolver>();
-        _betStrategy = new Mock<IBetOutcomeStrategy>();
+        _betStrategyMock = new Mock<IBetOutcomeStrategy>();
         _betService = new BetService(_betResolverMock.Object);
     }
 
@@ -33,10 +33,10 @@ public class BetServiceTests
             BetAmount: betAmount,
             WinAmount: winAmount);
 
-        _betStrategy.Setup(x => x.CalculateOutcome(betAmount))
+        _betStrategyMock.Setup(x => x.CalculateOutcome(betAmount))
             .Returns(winAmount);
         _betResolverMock.Setup(x => x.ResolveBetStrategy())
-            .Returns(_betStrategy.Object);
+            .Returns(_betStrategyMock.Object);
 
         var result = _betService.Bet(betAmount);
         
@@ -53,10 +53,10 @@ public class BetServiceTests
             BetAmount: betAmount,
             WinAmount: winAmount);
 
-        _betStrategy.Setup(x => x.CalculateOutcome(betAmount))
+        _betStrategyMock.Setup(x => x.CalculateOutcome(betAmount))
             .Returns(winAmount);
         _betResolverMock.Setup(x => x.ResolveBetStrategy())
-            .Returns(_betStrategy.Object);
+            .Returns(_betStrategyMock.Object);
 
         var result = _betService.Bet(betAmount);
         
@@ -73,10 +73,10 @@ public class BetServiceTests
             BetAmount: betAmount,
             WinAmount: winAmount);
         
-        _betStrategy.Setup(x => x.CalculateOutcome(betAmount))
+        _betStrategyMock.Setup(x => x.CalculateOutcome(betAmount))
             .Returns(winAmount);
         _betResolverMock.Setup(x => x.ResolveBetStrategy())
-            .Returns(_betStrategy.Object);
+            .Returns(_betStrategyMock.Object);
 
         var result = _betService.Bet(betAmount);
         
