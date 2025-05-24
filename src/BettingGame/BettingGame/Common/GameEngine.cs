@@ -25,6 +25,7 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
             if (input.Length == 0)
             {
                 Console.WriteLine(NoCommandMessage);
+                Console.WriteLine();
                 continue;
             }
             
@@ -58,6 +59,7 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
             else
             {
                 Console.WriteLine(InvalidCommandUsageMessage);
+                Console.WriteLine();
             }
 
             if (command is null)
@@ -67,16 +69,12 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
             
             var result = await command.Execute(input);
 
-            if (result.IsSuccess)
+            if (!result.IsSuccess)
             {
-                Console.WriteLine(result.Message);
-            }
-            else
-            {
-                Console.WriteLine(result.Message);
                 Log.Fatal(result.Exception, $"{command.GetType().Name} resulted in error!");
             }
 
+            Console.WriteLine(result.Message);
             Console.WriteLine();
         }
         
