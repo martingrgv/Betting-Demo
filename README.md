@@ -81,6 +81,7 @@ dotnet run
 1. Navigate to the project folder
 2. Run the commands one after the other to start Docker services and run the application in terminal:
 ```
+cd src
 docker-compose up -d
 ```
 ```
