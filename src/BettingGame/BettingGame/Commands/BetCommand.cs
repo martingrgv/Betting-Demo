@@ -8,6 +8,7 @@ public class BetCommand(IBetService betService, IWalletService walletService, Wa
         {
             decimal betAmount = decimal.Parse(inputArgs[1], NumberStyles.Number, CultureInfo.InvariantCulture);
 
+            ArgumentOutOfRangeException.ThrowIfNegative(betAmount);
             if (betAmount > wallet.Balance)
             {
                 throw new InsufficientBalanceException(wallet.Id, betAmount);
@@ -36,13 +37,13 @@ public class BetCommand(IBetService betService, IWalletService walletService, Wa
                 MessageConstants.BetErrorDueToInsufficientBalanceMessage,
                 ex);
         }
-        catch (ArgumentException ex)
+        catch (ArgumentOutOfRangeException ex) when (ex.InnerException != null)
         {
-            return Result.Failure(ex.ParamName!, ex);
+            return Result.Failure(ex.InnerException!.Message, ex);
         }
         catch (Exception ex)
         {
-            return Result.Failure(ex);
+            return Result.Failure(MessageConstants.CommonErrorMessage, ex);
         }
     }
 

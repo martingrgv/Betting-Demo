@@ -25,7 +25,7 @@ public class WithdrawCommand(IWalletService walletService, Wallet wallet) : ICom
                 return Result.Failure(MessageConstants.InsufficientBalanceWithdrawMessage, ex);
             }
             
-            return Result.Failure(ex);
+            return Result.Failure(MessageConstants.CommonErrorMessage, ex);
         }
     }
 }

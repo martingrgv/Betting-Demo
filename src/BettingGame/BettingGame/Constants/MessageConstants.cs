@@ -11,6 +11,7 @@ public static class MessageConstants
     public const string InvalidCommandUsageMessage = "Invalid usage! Usage: deposit/withdraw/bet <amount>";
     public const string NoCommandMessage = "No choice was made";
     public const string BetErrorDueToInsufficientBalanceMessage = "You cannot place your bet due to insufficient balance";
+    public const string CommonErrorMessage = "Error occured! Please, contact game support";
     
     // Wallet
     public const string SuccessDepositMessage = "Your deposit of ${0} was successful.";

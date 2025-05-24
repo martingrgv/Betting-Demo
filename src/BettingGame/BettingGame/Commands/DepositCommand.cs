@@ -20,7 +20,7 @@ public class DepositCommand(IWalletService walletService, Wallet wallet) : IComm
         }
         catch (Exception ex)
         {
-            return Result.Failure(ex);
+            return Result.Failure(MessageConstants.CommonErrorMessage, ex);
         }
     }
 }
