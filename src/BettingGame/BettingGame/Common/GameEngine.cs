@@ -83,7 +83,7 @@ public class GameEngine(CommandFactory commandFactory, IWalletService walletServ
 
     private async Task<Wallet> GetOrCreateWallet(Guid playerId)
     {
-        var wallet = await walletService.GetByPlayerId(playerId)
+        var wallet = await walletService.GetByPlayerIdAsync(playerId)
                      ?? await walletService.CreateWalletAsync(playerId);
 
         return wallet;

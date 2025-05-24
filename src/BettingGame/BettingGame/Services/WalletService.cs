@@ -7,16 +7,15 @@ public class WalletService(BettingDbContext dbContext) : IWalletService
 {
    private const int InitialBalance = 0;
     
-    public async Task<Wallet?> GetById(Guid id)
+    public async Task<Wallet?> GetByIdAsync(Guid id)
         => await dbContext.Wallets.FindAsync(id);
 
-    public async Task<Wallet?> GetByPlayerId(Guid playerId)
+    public async Task<Wallet?> GetByPlayerIdAsync(Guid playerId)
         => await dbContext.Wallets.FirstOrDefaultAsync(w => w.PlayerId == playerId);
 
     public async Task<Wallet> CreateWalletAsync(Guid playerId)
     {
-        var wallet = await GetByPlayerId(playerId);
-
+        var wallet = await GetByPlayerIdAsync(playerId);
         if (wallet != null)
         {
             return wallet;
@@ -35,40 +34,25 @@ public class WalletService(BettingDbContext dbContext) : IWalletService
 
     public async Task DepositAsync(Wallet wallet, decimal amount)
     {
-        if (wallet is null)
-        {
-            throw new ArgumentNullException(nameof(wallet));
-        }
-        
-        if (amount < 0)
-        {
-            throw new ArgumentOutOfRangeException($"{nameof(amount)} must be a positive number.");
-        }
+        ArgumentNullException.ThrowIfNull(wallet);
+        ArgumentOutOfRangeException.ThrowIfNegative(amount);
 
+        dbContext.Attach(wallet);
         wallet.UpdateAmount(amount);
+        
         await dbContext.SaveChangesAsync();
     }
 
     public async Task<decimal> WithdrawAsync(Wallet wallet, decimal amount)
     {
-        if (wallet is null)
-        {
-            throw new ArgumentNullException(nameof(wallet));
-        }
+        ArgumentNullException.ThrowIfNull(wallet);
+        ArgumentOutOfRangeException.ThrowIfNegative(amount);
+        InsufficientBalanceException.ThrowIfBalanceNegative(wallet, amount);
 
-        if (amount < 0)
-        {
-            throw new ArgumentOutOfRangeException($"{nameof(amount)} must be a positive number.");
-        }
-
-        if (wallet.Balance - amount < 0)
-        {
-            throw new InsufficientBalanceException(wallet.Id, amount);
-        }
-
+        dbContext.Attach(wallet);
         wallet.UpdateAmount(-amount);
-        await dbContext.SaveChangesAsync();
         
+        await dbContext.SaveChangesAsync();
         return amount;
     }
 }
