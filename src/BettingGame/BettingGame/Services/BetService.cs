@@ -14,12 +14,12 @@ public class BetService(IBetOutcomeResolver betOutcomeResolver) : IBetService
         
         var outcomeStrategy = betOutcomeResolver.ResolveBetStrategy();
         var winAmount = outcomeStrategy.CalculateOutcome(amount);
-
         bool isWin = winAmount > 0;
+        
         var result = new GameResult(
-            isWin: isWin,
-            betAmount: amount,
-            winAmount: winAmount);
+            IsWin: isWin,
+            BetAmount: amount,
+            WinAmount: winAmount);
 
         return result;
     }
