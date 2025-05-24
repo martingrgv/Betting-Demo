@@ -7,6 +7,7 @@ public class DepositCommand(IWalletService walletService, Wallet wallet) : IComm
         try
         {
             decimal amount = decimal.Parse(inputArgs[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+            ArgumentOutOfRangeException.ThrowIfNegative(amount);
             
             await walletService.DepositAsync(wallet, amount);
             Log.Information("Deposit of ${amount} has been made on wallet: {WalletId}", amount, wallet.Id);

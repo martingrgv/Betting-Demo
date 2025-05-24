@@ -7,6 +7,7 @@ public class WithdrawCommand(IWalletService walletService, Wallet wallet) : ICom
         try
         {
             decimal amount = decimal.Parse(inputArgs[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+            ArgumentOutOfRangeException.ThrowIfNegative(amount);
             
             await walletService.WithdrawAsync(wallet, amount);
             Log.Information("Withdraw of ${amount} has been made on wallet: {WalletId}", amount, wallet.Id);
