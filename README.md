@@ -69,9 +69,7 @@ A simple betting game demo written in C#. This project is intended as an educati
 Docker (for containerized run)
 
 ### Running Locally
-1. If running SQL Server locally change connection string in `appsettings.json` <br />
-1.1 You can also use the SQL Server container by running `docker-compose up -d`
-2. Run the command in terminal or start the app from IDE:
+2. Run the application in terminal or start the app from IDE:
 ```
 cd src/Betting.Game
 dotnet run
@@ -82,7 +80,7 @@ dotnet run
 2. Run the commands one after the other to start Docker services and run the application in terminal:
 ```
 cd src
-docker-compose up -d && docker-compose --profile interactive run betting.game
+docker-compose --profile interactive run betting.game
 ```
 
 ### 📄 License
