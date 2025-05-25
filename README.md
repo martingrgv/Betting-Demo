@@ -71,7 +71,7 @@ Docker (for containerized run)
 ### Running Locally
 2. Run the application in terminal or start the app from IDE:
 ```
-cd src/Betting.Game
+cd src/BettingGame/BettingGame
 dotnet run
 ```
 
