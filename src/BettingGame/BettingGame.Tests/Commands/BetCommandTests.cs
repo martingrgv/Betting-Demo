@@ -1,11 +1,3 @@
-using BettingGame.Abstractions;
-using BettingGame.Commands;
-using BettingGame.Common;
-using BettingGame.Constants;
-using BettingGame.Data.Models;
-using BettingGame.Exceptions;
-using Moq;
-
 namespace BettingGame.Tests.Commands;
 
 [TestFixture]

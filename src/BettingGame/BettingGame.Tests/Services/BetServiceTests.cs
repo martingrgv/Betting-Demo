@@ -1,8 +1,3 @@
-using BettingGame.Abstractions;
-using BettingGame.Common;
-using BettingGame.Services;
-using Moq;
-
 namespace BettingGame.Tests.Services;
 
 [TestFixture]

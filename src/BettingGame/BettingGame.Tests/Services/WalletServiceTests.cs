@@ -1,87 +1,36 @@
-using System.Data;
-using BettingGame.Abstractions;
-using BettingGame.Data;
-using BettingGame.Data.Models;
-using BettingGame.Exceptions;
-using BettingGame.Services;
-using Microsoft.EntityFrameworkCore;
-
 namespace BettingGame.Tests.Services;
 
 [TestFixture]
 public class WalletServiceTests
 {
-    private BettingDbContext _dbContext;
+    private const int InitialBalance = 0;
     private IWalletService _walletService;
 
     [SetUp]
     public void SetUp()
     {
-        var options = new DbContextOptionsBuilder<BettingDbContext>()
-            .UseInMemoryDatabase("BettingDb")
-            .Options;
-
-        _dbContext = new BettingDbContext(options);
-        _walletService = new WalletService(_dbContext);
+        _walletService = new WalletService();
     }
 
     [Test]
-    public async Task GetById_WalletExists_ReturnsWallet()
+    public async Task GetByPlayerId_PlayerHasWallet_ReturnsExistingWallet()
     {
-        var walletId = Guid.NewGuid();
         var playerId = Guid.NewGuid();
-        var balance = 100m;
-        var wallet = new Wallet(walletId, playerId, balance);
-
-        _dbContext.Wallets.Add(wallet);
-        await _dbContext.SaveChangesAsync();
-
-        var result = await _walletService.GetByIdAsync(walletId);
-
-        Assert.That(result, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Id, Is.EqualTo(walletId));
-            Assert.That(result.PlayerId, Is.EqualTo(playerId));
-            Assert.That(result.Balance, Is.EqualTo(balance));
-        });
-    }
-
-    [Test]
-    public async Task GetById_WalletNotExisting_ReturnsNull()
-    {
-        var walletId = Guid.NewGuid();
-
-        var result = await _walletService.GetByIdAsync(walletId);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public async Task GetByPlayerId_PlayerExists_ReturnsWallet()
-    {
-        var walletId = Guid.NewGuid();
-        var playerId = Guid.NewGuid();
-        var balance = 100m;
-        var wallet = new Wallet(walletId, playerId, balance);
-
-        _dbContext.Wallets.Add(wallet);
-        await _dbContext.SaveChangesAsync();
-
+        var wallet = await _walletService.CreateWalletAsync(playerId);
+        
         var result = await _walletService.GetByPlayerIdAsync(playerId);
 
         Assert.That(result, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(result.Id, Is.EqualTo(walletId));
+            Assert.That(result.Id, Is.EqualTo(wallet.Id));
             Assert.That(result.PlayerId, Is.EqualTo(playerId));
-            Assert.That(result.Balance, Is.EqualTo(balance));
+            Assert.That(result.Balance, Is.EqualTo(wallet.Balance));
         });
     }
 
-
     [Test]
-    public async Task GetByPlayerId_PlayerNotExisting_ReturnsNull()
+    public async Task GetByPlayerId_PlayerDoesNotHaveWallet_ReturnsNull()
     {
         var playerId = Guid.NewGuid();
 
@@ -93,24 +42,17 @@ public class WalletServiceTests
     [Test]
     public async Task CreateWalletAsync_WalletExists_ReturnsExistingWallet()
     {
-        var walletId = Guid.NewGuid();
         var playerId = Guid.NewGuid();
-        var balance = 100m;
-        var wallet = new Wallet(walletId, playerId, balance);
-
-        _dbContext.Wallets.Add(wallet);
-        await _dbContext.SaveChangesAsync();
+        var wallet = await _walletService.CreateWalletAsync(playerId);
 
         var result = await _walletService.CreateWalletAsync(playerId);
-        int walletsCount = _dbContext.Wallets.Count();
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(walletsCount, Is.EqualTo(1));
         Assert.Multiple(() =>
         {
-            Assert.That(result.Id, Is.EqualTo(walletId));
+            Assert.That(result.Id, Is.EqualTo(wallet.Id));
             Assert.That(result.PlayerId, Is.EqualTo(playerId));
-            Assert.That(result.Balance, Is.EqualTo(balance));
+            Assert.That(result.Balance, Is.EqualTo(wallet.Balance));
         });
     }
 
@@ -120,32 +62,25 @@ public class WalletServiceTests
         var playerId = Guid.NewGuid();
 
         var result = await _walletService.CreateWalletAsync(playerId);
-        var existsInDb = await _dbContext.Wallets.AnyAsync(w => w.PlayerId == playerId);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(existsInDb, Is.True);
         Assert.Multiple(() =>
         {
             Assert.That(result.PlayerId, Is.EqualTo(playerId));
-            Assert.That(result.Balance, Is.EqualTo(0));
+            Assert.That(result.Balance, Is.EqualTo(InitialBalance));
         });
     }
 
     [Test]
     public async Task DepositAsync_DepositsAmountToWallet()
     {
-        var walletId = Guid.NewGuid();
         var playerId = Guid.NewGuid();
-        var balance = 100m;
-        var depositAmount = 200;
-        var wallet = new Wallet(walletId, playerId, balance);
-
-        _dbContext.Wallets.Add(wallet);
-        await _dbContext.SaveChangesAsync();
+        var initialBalance = 0;
+        var depositAmount = 200m;
+        var wallet = await _walletService.CreateWalletAsync(playerId);
 
         Assert.DoesNotThrowAsync(() => _walletService.DepositAsync(wallet, depositAmount));
-        Assert.That(async () => (await _dbContext.Wallets.FindAsync(walletId))!.Balance,
-            Is.EqualTo(balance + depositAmount));
+        Assert.That(wallet.Balance, Is.EqualTo(initialBalance + depositAmount));
     }
 
     [Test]
@@ -175,7 +110,7 @@ public class WalletServiceTests
         var depositAmount = 200;
         var wallet = new Wallet(walletId, playerId, balance);
 
-        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => _walletService.DepositAsync(wallet, depositAmount));
+        Assert.ThrowsAsync<InvalidOperationException>(() => _walletService.DepositAsync(wallet, depositAmount));
     }
     
     [Test]
@@ -187,35 +122,27 @@ public class WalletServiceTests
     [Test]
     public async Task WithdrawAsync_HasBalanceToWithdraw_LowersBalance()
     {
-        var walletId = Guid.NewGuid();
         var playerId = Guid.NewGuid();
-        var balance = 100m;
-        var withdrawAmount = 50;
-        var wallet = new Wallet(walletId, playerId, balance);
-
-        _dbContext.Wallets.Add(wallet);
-        await _dbContext.SaveChangesAsync();
+        var initialBalance = 100m;
+        var withdrawAmount = 50m;
+        var wallet = await _walletService.CreateWalletAsync(playerId);
+        wallet.UpdateAmount(initialBalance);
 
         Assert.DoesNotThrowAsync(() => _walletService.WithdrawAsync(wallet, withdrawAmount));
-        Assert.That(async () => (await _dbContext.Wallets.FindAsync(walletId))!.Balance,
-            Is.EqualTo(balance - withdrawAmount));
+        Assert.That(wallet.Balance, Is.EqualTo(initialBalance - withdrawAmount));
     }
     
     [Test]
     public async Task WithdrawAsync_GreaterThanMaxAmountBalance_LowersBalance()
     {
-        var walletId = Guid.NewGuid();
         var playerId = Guid.NewGuid();
-        var balance = decimal.MaxValue;
+        var initialBalance = decimal.MaxValue;
         var withdrawAmount = 1;
-        var wallet = new Wallet(walletId, playerId, balance);
-
-        _dbContext.Wallets.Add(wallet);
-        await _dbContext.SaveChangesAsync();
+        var wallet = await _walletService.CreateWalletAsync(playerId);
+        wallet.UpdateAmount(initialBalance);
 
         Assert.DoesNotThrowAsync(() => _walletService.WithdrawAsync(wallet, withdrawAmount));
-        Assert.That(async () => (await _dbContext.Wallets.FindAsync(walletId))!.Balance,
-            Is.EqualTo(balance - withdrawAmount));
+        Assert.That(wallet.Balance, Is.EqualTo(initialBalance - withdrawAmount));
     }
     
     [Test]
@@ -246,18 +173,12 @@ public class WalletServiceTests
         var depositAmount = 50;
         var wallet = new Wallet(walletId, playerId, balance);
 
-        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => _walletService.WithdrawAsync(wallet, depositAmount));
+        Assert.ThrowsAsync<InvalidOperationException>(() => _walletService.WithdrawAsync(wallet, depositAmount));
     }
         
     [Test]
     public void WithdrawAsync_NullWallet_ThrowsException()
     {
          Assert.ThrowsAsync<NullReferenceException>(() => _walletService.WithdrawAsync(null, 0));
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        _dbContext.Dispose();
     }
 }

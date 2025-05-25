@@ -1,17 +1,12 @@
-using BettingGame.Data;
-using Microsoft.EntityFrameworkCore;
-
 namespace BettingGame.Services;
 
-public class WalletService(BettingDbContext dbContext) : IWalletService
+public class WalletService : IWalletService
 {
-   private const int InitialBalance = 0;
-    
-    public async Task<Wallet?> GetByIdAsync(Guid id)
-        => await dbContext.Wallets.FindAsync(id);
+    private readonly IList<Wallet> _wallets = [];
+    private const int InitialBalance = 0;
 
-    public async Task<Wallet?> GetByPlayerIdAsync(Guid playerId)
-        => await dbContext.Wallets.FirstOrDefaultAsync(w => w.PlayerId == playerId);
+    public Task<Wallet?> GetByPlayerIdAsync(Guid playerId)
+        => Task.FromResult(_wallets.FirstOrDefault(w => w.PlayerId == playerId));
 
     public async Task<Wallet> CreateWalletAsync(Guid playerId)
     {
@@ -26,8 +21,7 @@ public class WalletService(BettingDbContext dbContext) : IWalletService
             playerId,
             InitialBalance);
 
-        dbContext.Wallets.Add(wallet);
-        await dbContext.SaveChangesAsync();
+        _wallets.Add(wallet);
 
         return wallet;
     }
@@ -41,31 +35,25 @@ public class WalletService(BettingDbContext dbContext) : IWalletService
 
     public async Task<decimal> WithdrawAsync(Wallet wallet, decimal amount)
     {
-        InsufficientBalanceException.ThrowIfBalanceNegative(wallet, amount);
         ArgumentOutOfRangeException.ThrowIfNegative(amount);
+        InsufficientBalanceException.ThrowIfBalanceNegative(wallet, amount);
         
         var withdrawAmount = await UpdateBalanceAsync(wallet, -amount);
 
         return withdrawAmount;
     }
 
-    private async Task<decimal> UpdateBalanceAsync(Wallet wallet, decimal amount)
+    private Task<decimal> UpdateBalanceAsync(Wallet wallet, decimal amount)
     {
         ArgumentNullException.ThrowIfNull(wallet);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(amount, decimal.MaxValue);
 
-        try
+        if (!_wallets.Any(w => w == wallet))
         {
-            dbContext.Attach(wallet);
-            wallet.UpdateAmount(amount);
-            await dbContext.SaveChangesAsync();
-            
-            return amount;
+            throw new InvalidOperationException($"Wallet doesn't exist and cannot be updated! WalletId: {wallet.Id}; PlayerId: {wallet.PlayerId}");
         }
-        catch (DbUpdateException)
-        {
-            await dbContext.Entry(wallet).ReloadAsync();
-            throw;
-        }
+
+        wallet.UpdateAmount(amount);
+        return Task.FromResult(amount);
     }
 }

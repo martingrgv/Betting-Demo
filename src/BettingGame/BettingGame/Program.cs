@@ -10,8 +10,6 @@ try
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
 
-    await app.ApplyMigrations(services);
-
     var engine = services.GetRequiredService<IGameEngine>();
     await engine.RunAsync();
 }
@@ -36,7 +34,6 @@ HostApplicationBuilder CreateBuilder(string[] args)
     }));
 
     builder.Services.AddLogging(builder.Configuration);
-    builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddApplicationServices();
 
     return builder;
