@@ -18,9 +18,7 @@ public class BetCommand(IBetService betService, IWalletService walletService, Wa
 
             if (gameResult.IsWin)
             {
-                var total = gameResult.WinAmount + betAmount;
-                var profit = total - betAmount;
-
+                var profit = gameResult.WinAmount - betAmount;
                 await walletService.DepositAsync(wallet, profit);
             }
             else
@@ -60,7 +58,7 @@ public class BetCommand(IBetService betService, IWalletService walletService, Wa
                 string.Format(MessageConstants.WinMessage, $"{gameResult.WinAmount:f2}"),
                 string.Format(MessageConstants.BalanceReviewMessage, $"{walletBalance:f2}"));
         }
-        
+
         return string.Join(
             " ",
             MessageConstants.LoseMessage,
